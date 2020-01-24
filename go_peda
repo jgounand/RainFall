@@ -1,0 +1,4 @@
+scp -P 4242 -r ./peda levelXX@10.12.1.139:/tmp/
+chmod 777 ~/
+echo "source /tmp/peda/peda.py" >> ~/.gdbinit
+
