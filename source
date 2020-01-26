@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <stdlib.h>
+int run()
+{
+	char good[] = "Good... Wait what?\n"";
+	char from_env_SHELL[] = "/bin/bash";
+	fwrite(good,1,19,stdout);
+	system(from_env_SHELL);
+	return 0;
+}
+
+int main()
+{
+	char a[80];
+	gets(a);
+	return (0);
+}

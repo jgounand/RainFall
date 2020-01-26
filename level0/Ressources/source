@@ -1,0 +1,25 @@
+#include <unistd.h>
+
+
+int main(int arc, char **arv)
+{
+
+	char *dup;
+	gid_t gid;
+	uid_t uid;
+ if (atoi(arv[1]) == 423) 
+	{
+		dup = strdup("/bin/sh");
+		gid = getegid();
+		uid = geteuid();
+		setresgid(uid,uid,uid);
+		setresuid(gid,gid,gid);
+		execv("/bin/sh","/bin/sh")
+}
+else
+{
+	fwrite("No !\n",1,5,stdout);
+}
+
+	return (0);
+}
