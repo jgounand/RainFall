@@ -5,7 +5,7 @@ void v()
 	char *str;
 	void *addr == 0x804988c; /dans le .bss
 	fgets(0, 0x200,str)
-	printf(str)
+	printf(str)  //exploit here to change the value of the *addr
 	if ((unsigned int)*addr == 0x40) 
 	{
 		fwrite("Wait what ?!\N", 1, 0x0x,STDOUT);
