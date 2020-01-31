@@ -10,13 +10,13 @@ void p(char *str)
 
 void n()
 {
-	void *addr = 0x8049810;
 	char *str;
 	fgets(str,0x200,STDIN);
 	p(str);
+	void *addr = 0x8049810;
 	if (*addr == 0x1025544)
 	{	
-		system("")
+		system("/bin/cat /home/user/level5/.pass");
 	}
 }
 
