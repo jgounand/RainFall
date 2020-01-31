@@ -1,0 +1,19 @@
+void o()
+{
+	system();
+	exit();
+}
+
+
+void n()
+{
+	char *str;
+	fgets(str,0x200,STDIN);
+	exit();
+	p(str);
+}
+
+int main()
+{
+	return (n());
+}
