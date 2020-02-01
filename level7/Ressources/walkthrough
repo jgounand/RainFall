@@ -1,0 +1,51 @@
+more:
+	<main>
+		ebp - 0x20 	stack + 0x20
+		[esp + 0x1c] 	= malloc(0x8)	= 0x804a008 		_1_
+		eax = [esp + 0x1c] = _1_
+		[eax] = 0x1  = [_1_] = 0x1
+		[esp] = 0x8
+		eax		= malloc(0x8)	= 0x804a018		_2_
+		edx = eax = _2_
+		eax = [esp + 0x1c] = _1_
+		[eax + 0x4] = edx = _2_						<== _1_ + 0x4 = _2_
+		[esp] = 0x8
+		[esp + 0x18] 	= malloc(0x8)	= 0x804a028		_3_
+		eax = [esp + 0x18]				??? meme operation qu'avant ret de malloc => eax
+		[eax] = 0x2 = [_3_]
+		[esp] = 0x8
+		edx = eax 	= malloc(0x8)	= 0x804a038		_4_
+		eax = [esp + 18] = _3_
+		[eax + 0x4] = [_3_ + 0x4] = edx = _4_				<== _3_ + 0x4 = _4_
+		eax = [ebp + 0xc]	= &arv[0]
+		eax += 0x4		= &arv[1]
+		edx = eax 		= &arv[1]
+		eax = [esp + 0x1c]	= _1_
+		eax = [eax + 0x04]	= _1_ + 0x4x = _2_
+		[esp + 0x4] = edx	= &arv[1]
+		[esp] = eax		= _2_
+		strcpy(_2_,arv[1])
+		eax = [ebp + 0xc]	= &arv[0]
+		eax += 0x8		= &arv[2]
+		eax = [eax]		= arv[2]	
+		edx = eax		= arv[2]
+		eax = [esp + 0x18]	= _3_
+		eax = [eax + 0x4]	= _3_ + 0x4 = _4_
+		[esp + 0x4] = edx	= arv[2]
+		[esp] = eax		= _4_
+		strcpy(_4_, arv[2])
+		edx = 0x80486e9		= "r"				<= .rodata  _5_
+		eax = 0x72000a64	= "/home/user/level8/.pass"	<= .rodata  _6_
+		[esp + 0x4] = edx	= _5_
+		[esp] = eax		= _6_
+		fopen(_5_,_6_)
+		[esp + 0x8] = eax	= ret fopen
+		[esp + 0x4] = 0x44
+		[esp]  0x8049960	= ""	function <c>	<= .rodata 	_7_
+		fgets(_7_,0x44,ret fopen)
+		[esp] = 0x8048703	= "~~"
+		puts(??)
+		return (0);
+
+			
+

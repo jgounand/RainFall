@@ -1,0 +1,19 @@
+void m()
+{
+	time(0);
+	printf()
+	return
+}
+int main(int ac, char **av)
+{
+	char *a = malloc(0x08);
+	char *b = malloc(0x08);
+	char *c = malloc(0x08);
+	char *d = malloc(0x08);
+	strcpy();
+	strcpy();
+	fopen();
+	fgets();
+	puts()
+	return 0;
+}
