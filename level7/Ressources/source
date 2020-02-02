@@ -1,19 +1,19 @@
 void m()
 {
-	time(0);
-	printf()
+	void *a = time(0);
+	printf("%s - %d\n",return of fgets, a);
 	return
 }
 int main(int ac, char **av)
 {
 	char *a = malloc(0x08);
-	char *b = malloc(0x08);
+	a + 1 = malloc(0x08);
 	char *c = malloc(0x08);
-	char *d = malloc(0x08);
-	strcpy();
-	strcpy();
-	fopen();
-	fgets();
-	puts()
+	c + 1 = malloc(0x08);
+	strcpy(a + 1,arv[1]);
+	strcpy(c + 1, arv[2]);
+	int fd = fopen("r","/home/user/level8/.pass");
+	fgets(fd,0x44,0);
+	puts("~~")
 	return 0;
 }
