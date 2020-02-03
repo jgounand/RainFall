@@ -1,0 +1,32 @@
+int main()
+{
+	void *service = NULL;
+	void *auth = NULL;
+	char	*str;
+	printf("%p, %p \n", auth, service);
+	fgets(str,0x80,STDIN);
+	if (str === "auth ")
+	{
+		auth = malloc(0x4)
+	}
+	if (str === "reset")
+	{
+		free(auth)
+	}
+	if (str === "service")
+	{
+		service = strdup(str + 7)
+	}	
+	if (str === "login")
+	{
+		if (*auth + 0x20 !== 0)
+		{
+			system("/bin/sh");
+		}
+		else
+		{
+			fwrite("Password:\n",1,"\n")
+		}	
+	}
+	return (0);
+}
