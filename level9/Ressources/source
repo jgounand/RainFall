@@ -1,10 +1,24 @@
-int main(int ac, char** av)
+void	_ZN1N13setAnnotation(void *class, char *av,char *string, void *SOMETHING)
 {
+	memcpy((char *)class + 1,av,strlen(av));						// ON PEUR OVERFLOW ICIC
+	return ;
+}
+
+int main(int ac, char** av,char **env)
+{
+	void *class1;
+	void *class2;
+	void	*call;
 	if (ac == 1)
 	{
 		exit();
 	}
-	_Znwj(0x6c);
-	
+	class1 = _Znwj(0x6c);							//0x804a008
+	_ZN1NC2Ei(class1,0x5);
+	class2 = _Znwj(0x6c);							//0x804a078
+	_ZN1NC2Ei(class2,0x6);
+	_ZN1N13setAnnotationEPc(class1,av[1],env[0],RANDOM_VALUE_FROM_STACK_NEVER_SET);
+	call = *class2;
+	call();
 	return (0);
 }

