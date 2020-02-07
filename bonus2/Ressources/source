@@ -1,0 +1,51 @@
+void greetuser(char *tmp))
+{	
+	char put[19];
+	esp - 0x58
+	eax = language
+	if (language == 1)
+		memcpy(put,0x8048717,0x12)		
+	if (language == 2)
+		memcpy(put,0x804872a,0xc);
+	if (language == 0)
+		memcpy(put,0x8048710,0x6);
+	else
+		memcpy(put,0x8048710,0x6)				//			0xbffff5f0
+	strcat(string,tmp);						//			0xbffff5f0, 0xbffff640
+	puts(string);							//			0xbffff5f0
+}
+
+	static	int language;
+
+int main(int ac, char** av,char **env)
+{
+	char tmp;							//esp
+	char	string[0x13 || 0x28 || 0x20];				//esp+0x50 		0xbffff690
+	char *env_LANG							//esp+0x9c;		0xbffff6dc
+	if (ac == 3)
+	{	
+		bzero(string,19 == 0x13)				//esp+0x50		0xbffff690
+		strncpy(string,av[1],0x28);				//esp+0x50		0xbffff690, 0xbffff8df
+		strncpy(string + 0x28,av[2],0x20);			//esp+0x50+0x28		0xbffff6b8, 0xbffff8e1
+		env_LANG = getenv("LANG");
+		if (env_LANG == 0x0)
+		{
+			language = 0 
+		}
+		else if (memcmp(env_LANG,"fi",2) == 0)
+		{
+				language = 1					
+				
+		}
+		else if (memcmp(env_LANG,"nl",2) == 0)
+		{
+				language = 2
+		}
+		edi = edx = avv[1]
+		esi = ebx = string
+		ecx = eax = 0x13
+		memmove(tmp,string,0x13 * 0x4);					//esp			0xbffff640
+		greetuser(tmp)
+	}
+	return (1);	
+}
