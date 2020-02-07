@@ -1,0 +1,27 @@
+int main(int ac, char** av,char **env)
+{
+	void *FIlE;						//[esp + 0x9c]	0xbffff69e ?? a verifier
+	char str[];						//[esp + 0x18]	0xbffff658
+	FILE = fopen("/home/user/end/.pass","r");		
+	edi = ebx = 0xbffff658;
+	memset(str,0,0x21);
+	if (FILE != 0 ac == 2)
+	{
+		fread(str,1,0x42,FILE);
+		str[0x41] = 0;
+		str[atoi(av[1])] = 0;
+		fread(str + 0x42, 1, 0x41, FILE);
+		fclose(FILE);
+		if (strcmp(str,av[1]) == 0)
+		{
+			execl("/bin/sh", "sh",0);
+		}
+		else
+		{
+			puts(str + 0x42)
+		}
+		
+	}
+
+	return (0);
+}

