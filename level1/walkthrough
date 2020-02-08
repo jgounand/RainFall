@@ -1,10 +1,7 @@
-r < <(perl -e 'print "'`cat ~/.pass > /tmp/a`'","\x90"x52,"\x44\x84\x04\x08"')
-
 buffer 74, pour ecraser EBP sauvgarder +4, pour ecraser EIP sauvgarder + 4
 
-donc pour ecraser la valeur de retour il faut ecricre 76 caracteres puis l'adresse (4 caracteres)
+donc pour ecraser la valeur de retour il faut ecrire 76 caracteres puis l'adresse (4 caracteres)
 
-dans le binaire level1 il est impossible de faire nm donc il doit cacher des fuctions.
 avec objdump -D level1 on repere un appelle system dans la function run.
 
 Il faut donc envoyer l'adresse du debut de la function run.

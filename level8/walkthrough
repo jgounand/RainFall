@@ -8,12 +8,12 @@ Mais avant d'executer un system il y a une condition. Il y a une comparaison.
    		0x080486e7 <+387>:	mov    eax,DWORD PTR [eax+0x20]
    		0x080486ea <+390>:	test   eax,eax
 	
-	Donc la valeur dans 0x8049aac doit etre une adresse. Si la valeur dans adresse + 0x20 est different a 0, la function  system() est appellee.
+	Donc la valeur dans 0x8049aac doit etre une adresse. Si la valeur dans adresse + 0x20 est differente a 0, la function  system() est appellee.
 Pour ajouter une valeur a l'adresse 0x8049aac. il faut envoyer dans STDIN "auth ", le programme va enregeistrer le retour de malloc(0x4).
 
 Maintenant il faut reussir a ecrire une valeur *0x8049aac + 0x20. Si on refait "auth " on va remplacer la value de 0x8049aac et donc le referenciel va etre deplace.
 En entrant la chaine de caractere "service", un strdup est execute. Le malloc du strup ce trouve apres sur la stack. Donc il est possible d'ecrire une valeur sur *0x8049aac + 0x20.
-Le strdup va nous renvoyer le retour du malloc  cest a dire (*0x804a008 + 1 )% 16 donc 0x804a018 lors de la premiere execution. la source de strdup commence a string + strlen(service). Pour ajouter changer la valeur de *0x8049aac + 0x20 il faut donc ajouter 16 caraceteres apres "service" (0x804a008 + 0x20 - 0x804a018 = 0x10).
+Le strdup va nous renvoyer le retour du malloc c'est a dire (*0x804a008 + 1 )% 16 donc 0x804a018 lors de la premiere execution. la source de strdup commence a string + strlen(service). Pour ajouter changer la valeur de *0x8049aac + 0x20 il faut donc ajouter 16 caraceteres apres "service" (0x804a008 + 0x20 - 0x804a018 = 0x10).
 	BINGO !!!!!!
 
 

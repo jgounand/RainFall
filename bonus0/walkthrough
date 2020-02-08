@@ -1,6 +1,11 @@
-On peut remarquer dans le code un strcpy et un strcat, ce sont deux fonctions qui s'arretent de copier que lorsqu'il rencontre un '\0'. on peut remarquer que dans la fonction pp il n y a pas de leave, il remet la stack manuellement comme a l'etat initial(add    esp,0x50) puis des pops.
+On peut remarquer dans le code un strcpy et un strcat, ce sont deux fonctions qui s'arretent de copier que lorsqu'ils rencontremt un '\0'.
+
+On peut remarquer que dans la fonction pp il n y a pas de leave, il remet la stack manuellement comme a l'etat initial(add    esp,0x50) puis des pops.
 Donc il impossible d'utiliser un overflow sur une adresse de cette stack.
-Les functions strcpy et strcat copie dans une adresse declaree dans le main !!! Donc on va overflow le EIP sauvgarde lors de l'arrivee dans le main. Tout d'abords nous devons calculer l'offset afin d'ecraser cette valeur.
+
+Les functions strcpy et strcat copient dans une adresse declaree dans le main !!! Donc on va overflow le EIP sauvgarde lors de l'arrivee dans le main.
+
+Tout d'abords nous devons calculer l'offset afin d'ecraser cette valeur.
 L'adresse ou on va ecricre est a l'adresse suivante : 0xbffff6d6
 L'adresse de sauvgarde de EIP est la suivante: 0xbffff70c
 	0xbffff70c - 0xbffff6d6 = 0x36 = 54
@@ -11,10 +16,10 @@ new	: string du main
 
 dest1 + 0x14 == dest2
 
-Dans p, la chaine retournee a une taille de 20, mais strcpy va copier jusqu'a qu il rencontreun '\0';
-Si la chain1 est plus grande que 20 dest1 ne finira pas par un '\0'; Donc le strcpy va copier aussi dest2 jusqu'a trouver un '\0';
+Dans p, la chaine retournee a une taille de 20, mais strcpy va copier jusqu'a qu il rencontre un '\0';
+Si la chaine1 est plus grande que 20 dest1 ne finira pas par un '\0'; Donc le strcpy va copier aussi dest2 jusqu'a trouver un '\0';
 Donc si chaine1 > 20 et chaine2 < 20 : new = dest1 + dest2;
-Puis a new1 il est rajoute 1.
+Puis a new1 il lui rajoute 1 " ".
 Enfin le strcat va rajouter a new1 dest2. Donc notre chaine de caractere aura une taille. l_dest1 + l_dest2 + 1 + l_dest2 = 54 + 4 (pour ecraser EIP)
 Donc Pour avoir une len > 40 il faut que notre chaine1 fasse plus de 20 si non new sera : l_dest1 + 1 + ldest2
 

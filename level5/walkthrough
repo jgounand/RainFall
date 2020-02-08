@@ -1,6 +1,6 @@
 LIVRE: HACKING THE ART OF EXPLOITATION by Hogn ERICKSON v2 (a partir de page 190)
 
-Quand une function est utilise dans une librairie partagee,  c est utilse d'avoir un table ou sont referencees les functions.
+Quand une function est utilisee dans une librairie partagee, on trouve une table ou sont referencees les functions.
 
 Section PLT (procedure limkage table). Cette section consiste a faire pleins de jump, chaque jump correspond a une function. Pour l'afficher :objdump -d -j .plt [FILE]
 

@@ -1,16 +1,16 @@
 ouverture avec gdb peda:
 
-le binaire a besoin d'un argument. Il y a un atoi puis la value est compare a 0x1A7 = 423.
+le binaire a besoin d'un argument. Il y a un atoi puis la valeur est comparee a 0x1A7 = 423.
 
 
 on relance le binaire sans gdb mais avec la value 423 en argument
 
 on se retrouve sur un shell (/bin/sh)
 
-je lance donc /bin/bash pour avoir plus de lisibilitee.
+je lance donc /bin/bash pour avoir plus de lisibilité.
 
 je vois le prompt level1@RainFall:
-donc je serais connecte avec l'utilisateur level1
+donc je serai connecte avec l'utilisateur level1
 
 N'ayant pas de .pass dans le home de level0, je vais fair un cat sur celui de level1
 cat /home/user/level1/.pass

@@ -1,7 +1,11 @@
-Dans ce binaire il y a deux malloc de deux deux classes. Puis la function _ZN1N13setAnnotationEPc va copier arg[1] dans la premiere classe creee sans verifier la taille de cette clase. De plus dans le code il y a un "call" via edx. eax est attribuee par une value sur la satck [esp + 0x10],eax = [esp + 0x10], la valeur de eax doit etre une adresse car edx = *eax ! Ce edx est l'adresse du deuxieme malloc (2e classe).
+Dans ce binaire il y a deux malloc de deux deux classes. Puis la function _ZN1N13setAnnotationEPc va copier arg[1] dans la premiere classe creee sans verifier la taille de cette clase.
+
+De plus dans le code il y a un "call" via edx. eax est attribuee par une value sur la satck [esp + 0x10],eax = [esp + 0x10], la valeur de eax doit etre une adresse car edx = *eax ! Ce edx est l'adresse du deuxieme malloc (2e classe).
+
 Le second malloc se trouvant apres le premier sur la stack il est possible de l'overflow.
 La function _ZN1N13setAnnotationEPc va ecrire dans la (char *)classe + 0x4, et on veut ecraser classe2. offset = classe2 - (char *)classe + 0x4 = 0x804a078 - 0x804a008 + 0x4 = 0x6c
 On a notre offset: 0x6c
+
 N'oublions pas qu'il faut faire pointer cette value vers une autre adresse qui pointera vers le shellcode. J'ai decide de mettre l'adresse et le shellcode dans l'environement.
 
 [ADDR1]	=>	[ADDR1 + 0x4][SHELLCODE]
